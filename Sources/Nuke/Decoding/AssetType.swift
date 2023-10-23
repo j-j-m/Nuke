@@ -61,6 +61,13 @@ extension AssetType {
             }
         }
 
+        func isM3U8() -> Bool {
+            guard let stringData = String(data: data, encoding: .utf8) else {
+                return false
+            }
+            return stringData.hasPrefix("#EXTM3U")
+        }
+
         // JPEG magic numbers https://en.wikipedia.org/wiki/JPEG
         if _match([0xFF, 0xD8, 0xFF]) { return .jpeg }
 
@@ -82,6 +89,8 @@ extension AssetType {
         // MOV magic numbers https://www.garykessler.net/library/file_sigs.html
         if _match([0x66, 0x74, 0x79, 0x70, 0x71, 0x74, 0x20, 0x20], offset: 4) { return .mov }
 
+        if isM3U8() { return .m3u8 }
+        
         // Either not enough data, or we just don't support this format.
         return nil
     }
